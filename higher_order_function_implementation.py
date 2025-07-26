@@ -324,13 +324,11 @@ def performance_comparison():
             result = func(result, x)
         return result
     
-    # Test data
     large_list = list(range(100000))
     
     print(f"Testing with {len(large_list):,} elements...")
     print()
     
-    # Map performance test
     print("1. Map Performance (square all numbers):")
     
     start_time = time.time()
@@ -346,7 +344,6 @@ def performance_comparison():
     print(f"   Results match: {result1 == result2}")
     print()
     
-    # Filter performance test
     print("2. Filter Performance (even numbers):")
     
     start_time = time.time()
@@ -362,9 +359,8 @@ def performance_comparison():
     print(f"   Results match: {result3 == result4}")
     print()
     
-    # Reduce performance test
     print("3. Reduce Performance (sum all numbers):")
-    small_list = list(range(10000))  # Smaller list for reduce
+    small_list = list(range(10000))
     
     start_time = time.time()
     result5 = reduce(lambda x, y: x + y, small_list)
@@ -380,11 +376,9 @@ def performance_comparison():
     print()
 
 def interactive_function_builder():
-    """Interactive tool to build and test higher-order functions"""
     
     print("=== Interactive Function Builder ===")
     
-    # Custom implementations
     def custom_map(func, iterable):
         return [func(x) for x in iterable]
     
@@ -446,7 +440,6 @@ def interactive_function_builder():
             print(f"Error: {e}")
 
 def main():
-    """Main function to run the higher-order function implementation"""
     
     while True:
         print("\n" + "="*60)
