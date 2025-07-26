@@ -258,15 +258,12 @@ def demonstrate_practical_applications():
     print("1. Data Processing Pipeline:")
     print("   Input numbers:", numbers)
     
-    # Step 1: Filter even numbers
     evens = custom_filter(lambda x: x % 2 == 0, numbers)
     print(f"   Step 1 - Filter evens: {evens}")
     
-    # Step 2: Square the even numbers
     squared_evens = custom_map(lambda x: x ** 2, evens)
     print(f"   Step 2 - Square evens: {squared_evens}")
     
-    # Step 3: Sum all squared evens
     total = custom_reduce(lambda x, y: x + y, squared_evens)
     print(f"   Step 3 - Sum all: {total}")
     print()
@@ -274,7 +271,6 @@ def demonstrate_practical_applications():
     print("2. Student Data Analysis:")
     print("   Students data:", students)
     
-    # Extract names
     names = custom_map(lambda s: s['name'], students)
     print(f"   Names: {names}")
     
@@ -311,7 +307,6 @@ def performance_comparison():
     import time
     from functools import reduce
     
-    # Custom implementations
     def custom_map(func, iterable):
         return [func(x) for x in iterable]
     

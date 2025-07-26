@@ -1,5 +1,3 @@
-# List Comprehension Converter
-# This program demonstrates converting traditional for-loops to list comprehensions
 
 import time
 import random
@@ -9,14 +7,12 @@ def demonstrate_basic_conversion():
     
     print("=== Basic List Creation ===")
     
-    # Example 1: Squares
     print("1. Creating squares:")
     print("Traditional Loop:")
     print("squares = []")
     print("for i in range(10):")
     print("    squares.append(i * i)")
     
-    # Traditional approach
     squares_traditional = []
     for i in range(10):
         squares_traditional.append(i * i)
@@ -26,14 +22,12 @@ def demonstrate_basic_conversion():
     print("\nList Comprehension:")
     print("squares = [i * i for i in range(10)]")
     
-    # List comprehension approach
     squares_comprehension = [i * i for i in range(10)]
     print(f"Result: {squares_comprehension}")
     
     print(f"Results match: {squares_traditional == squares_comprehension}")
     print()
     
-    # Example 2: String operations
     print("2. String transformations:")
     words = ['hello', 'world', 'python', 'programming']
     
@@ -42,7 +36,6 @@ def demonstrate_basic_conversion():
     print("for word in words:")
     print("    uppercase.append(word.upper())")
     
-    # Traditional approach
     uppercase_traditional = []
     for word in words:
         uppercase_traditional.append(word.upper())
@@ -52,7 +45,6 @@ def demonstrate_basic_conversion():
     print("\nList Comprehension:")
     print("uppercase = [word.upper() for word in words]")
     
-    # List comprehension approach
     uppercase_comprehension = [word.upper() for word in words]
     print(f"Result: {uppercase_comprehension}")
     
@@ -64,7 +56,6 @@ def demonstrate_filtering():
     
     print("=== Filtering with Conditions ===")
     
-    # Example 1: Even numbers
     print("1. Filtering even numbers:")
     print("Traditional Loop:")
     print("evens = []")
@@ -72,7 +63,6 @@ def demonstrate_filtering():
     print("    if i % 2 == 0:")
     print("        evens.append(i)")
     
-    # Traditional approach
     evens_traditional = []
     for i in range(20):
         if i % 2 == 0:
@@ -83,14 +73,12 @@ def demonstrate_filtering():
     print("\nList Comprehension:")
     print("evens = [i for i in range(20) if i % 2 == 0]")
     
-    # List comprehension approach
     evens_comprehension = [i for i in range(20) if i % 2 == 0]
     print(f"Result: {evens_comprehension}")
     
     print(f"Results match: {evens_traditional == evens_comprehension}")
     print()
     
-    # Example 2: Filtering strings by length
     print("2. Filtering words by length:")
     words = ['cat', 'elephant', 'dog', 'hippopotamus', 'bird', 'whale']
     
@@ -100,7 +88,6 @@ def demonstrate_filtering():
     print("    if len(word) > 4:")
     print("        long_words.append(word)")
     
-    # Traditional approach
     long_words_traditional = []
     for word in words:
         if len(word) > 4:
@@ -111,14 +98,12 @@ def demonstrate_filtering():
     print("\nList Comprehension:")
     print("long_words = [word for word in words if len(word) > 4]")
     
-    # List comprehension approach
     long_words_comprehension = [word for word in words if len(word) > 4]
     print(f"Result: {long_words_comprehension}")
     
     print(f"Results match: {long_words_traditional == long_words_comprehension}")
     print()
     
-    # Example 3: Complex filtering with transformation
     print("3. Complex filtering with transformation:")
     numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     
@@ -128,7 +113,6 @@ def demonstrate_filtering():
     print("    if num % 2 == 1:")
     print("        odd_squares.append(num ** 2)")
     
-    # Traditional approach
     odd_squares_traditional = []
     for num in numbers:
         if num % 2 == 1:
@@ -139,7 +123,6 @@ def demonstrate_filtering():
     print("\nList Comprehension:")
     print("odd_squares = [num ** 2 for num in numbers if num % 2 == 1]")
     
-    # List comprehension approach
     odd_squares_comprehension = [num ** 2 for num in numbers if num % 2 == 1]
     print(f"Result: {odd_squares_comprehension}")
     
@@ -151,7 +134,6 @@ def demonstrate_nested_loops():
     
     print("=== Nested Loops ===")
     
-    # Example 1: Coordinate pairs
     print("1. Creating coordinate pairs:")
     print("Traditional Nested Loop:")
     print("pairs = []")
@@ -159,7 +141,6 @@ def demonstrate_nested_loops():
     print("    for y in range(2):")
     print("        pairs.append((x, y))")
     
-    # Traditional approach
     pairs_traditional = []
     for x in range(3):
         for y in range(2):
@@ -170,14 +151,12 @@ def demonstrate_nested_loops():
     print("\nList Comprehension:")
     print("pairs = [(x, y) for x in range(3) for y in range(2)]")
     
-    # List comprehension approach
     pairs_comprehension = [(x, y) for x in range(3) for y in range(2)]
     print(f"Result: {pairs_comprehension}")
     
     print(f"Results match: {pairs_traditional == pairs_comprehension}")
     print()
     
-    # Example 2: Matrix flattening
     print("2. Matrix flattening:")
     matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     
@@ -187,7 +166,6 @@ def demonstrate_nested_loops():
     print("    for item in row:")
     print("        flattened.append(item)")
     
-    # Traditional approach
     flattened_traditional = []
     for row in matrix:
         for item in row:
@@ -198,14 +176,12 @@ def demonstrate_nested_loops():
     print("\nList Comprehension:")
     print("flattened = [item for row in matrix for item in row]")
     
-    # List comprehension approach
     flattened_comprehension = [item for row in matrix for item in row]
     print(f"Result: {flattened_comprehension}")
     
     print(f"Results match: {flattened_traditional == flattened_comprehension}")
     print()
     
-    # Example 3: Multiplication table
     print("3. Multiplication table (filtered):")
     print("Traditional Nested Loop (products < 20):")
     print("products = []")
@@ -215,7 +191,6 @@ def demonstrate_nested_loops():
     print("        if product < 20:")
     print("            products.append((i, j, product))")
     
-    # Traditional approach
     products_traditional = []
     for i in range(1, 6):
         for j in range(1, 6):
@@ -228,7 +203,6 @@ def demonstrate_nested_loops():
     print("\nList Comprehension:")
     print("products = [(i, j, i*j) for i in range(1, 6) for j in range(1, 6) if i*j < 20]")
     
-    # List comprehension approach
     products_comprehension = [(i, j, i*j) for i in range(1, 6) for j in range(1, 6) if i*j < 20]
     print(f"Result: {products_comprehension}")
     
@@ -240,7 +214,6 @@ def demonstrate_advanced_comprehensions():
     
     print("=== Advanced Comprehensions ===")
     
-    # Example 1: Conditional expressions
     print("1. Conditional expressions (ternary operator):")
     numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     
@@ -252,7 +225,6 @@ def demonstrate_advanced_comprehensions():
     print("    else:")
     print("        classified.append('odd')")
     
-    # Traditional approach
     classified_traditional = []
     for num in numbers:
         if num % 2 == 0:
@@ -265,14 +237,12 @@ def demonstrate_advanced_comprehensions():
     print("\nList Comprehension:")
     print("classified = ['even' if num % 2 == 0 else 'odd' for num in numbers]")
     
-    # List comprehension approach
     classified_comprehension = ['even' if num % 2 == 0 else 'odd' for num in numbers]
     print(f"Result: {classified_comprehension}")
     
     print(f"Results match: {classified_traditional == classified_comprehension}")
     print()
     
-    # Example 2: Working with dictionaries
     print("2. Dictionary to list conversion:")
     scores = {'Alice': 85, 'Bob': 92, 'Charlie': 78, 'Diana': 96}
     
@@ -282,7 +252,6 @@ def demonstrate_advanced_comprehensions():
     print("    if score > 80:")
     print("        high_scorers.append(f'{name}: {score}')")
     
-    # Traditional approach
     high_scorers_traditional = []
     for name, score in scores.items():
         if score > 80:
@@ -293,7 +262,6 @@ def demonstrate_advanced_comprehensions():
     print("\nList Comprehension:")
     print("high_scorers = [f'{name}: {score}' for name, score in scores.items() if score > 80]")
     
-    # List comprehension approach
     high_scorers_comprehension = [f'{name}: {score}' for name, score in scores.items() if score > 80]
     print(f"Result: {high_scorers_comprehension}")
     
@@ -305,20 +273,16 @@ def performance_comparison():
     
     print("=== Performance Comparison ===")
     
-    # Generate large dataset
     large_numbers = list(range(100000))
     
-    # Test 1: Simple transformation
     print("1. Simple transformation (squares of 100,000 numbers):")
     
-    # Traditional approach timing
     start_time = time.time()
     squares_traditional = []
     for num in large_numbers:
         squares_traditional.append(num ** 2)
     traditional_time = time.time() - start_time
     
-    # List comprehension timing
     start_time = time.time()
     squares_comprehension = [num ** 2 for num in large_numbers]
     comprehension_time = time.time() - start_time
@@ -328,10 +292,8 @@ def performance_comparison():
     print(f"List comprehension is {traditional_time/comprehension_time:.2f}x faster")
     print()
     
-    # Test 2: Filtering
     print("2. Filtering (even numbers from 100,000):")
     
-    # Traditional approach timing
     start_time = time.time()
     evens_traditional = []
     for num in large_numbers:
@@ -339,7 +301,6 @@ def performance_comparison():
             evens_traditional.append(num)
     traditional_time = time.time() - start_time
     
-    # List comprehension timing
     start_time = time.time()
     evens_comprehension = [num for num in large_numbers if num % 2 == 0]
     comprehension_time = time.time() - start_time

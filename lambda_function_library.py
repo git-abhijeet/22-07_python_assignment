@@ -1,5 +1,3 @@
-# Lambda Function Library
-# This program demonstrates a collection of lambda functions for common tasks
 
 from functools import reduce
 import math
@@ -9,7 +7,6 @@ def demonstrate_basic_examples():
     
     print("=== Basic Examples from Requirements ===")
     
-    # Example lambda functions
     square = lambda x: x * x
     reverse = lambda s: s[::-1]
     filter_evens = lambda lst: list(filter(lambda x: x % 2 == 0, lst))
@@ -40,24 +37,20 @@ def demonstrate_mathematical_lambdas():
     
     print("=== Mathematical Lambda Functions ===")
     
-    # Basic mathematical operations
     add = lambda x, y: x + y
     multiply = lambda x, y: x * y
     power = lambda x, y: x ** y
     cube = lambda x: x ** 3
     absolute = lambda x: abs(x)
     
-    # More complex mathematical functions
     factorial = lambda n: reduce(lambda x, y: x * y, range(1, n + 1), 1)
     fibonacci = lambda n: n if n <= 1 else fibonacci(n-1) + fibonacci(n-2)
     is_prime = lambda n: n > 1 and all(n % i != 0 for i in range(2, int(n**0.5) + 1))
     gcd = lambda a, b: a if b == 0 else gcd(b, a % b)
     
-    # Trigonometric functions
     sin_degrees = lambda degrees: math.sin(math.radians(degrees))
     cos_degrees = lambda degrees: math.cos(math.radians(degrees))
     
-    # Distance and geometry
     distance_2d = lambda x1, y1, x2, y2: math.sqrt((x2-x1)**2 + (y2-y1)**2)
     circle_area = lambda radius: math.pi * radius ** 2
     
@@ -92,26 +85,22 @@ def demonstrate_string_lambdas():
     
     print("=== String Manipulation Lambda Functions ===")
     
-    # Basic string operations
     uppercase = lambda s: s.upper()
     lowercase = lambda s: s.lower()
     capitalize_first = lambda s: s.capitalize()
     title_case = lambda s: s.title()
     reverse = lambda s: s[::-1]
     
-    # String analysis
     count_vowels = lambda s: sum(1 for c in s.lower() if c in 'aeiou')
     count_words = lambda s: len(s.split())
     remove_spaces = lambda s: s.replace(' ', '')
     is_palindrome = lambda s: s.lower() == s.lower()[::-1]
     
-    # String transformations
     swap_case = lambda s: s.swapcase()
     remove_vowels = lambda s: ''.join(c for c in s if c.lower() not in 'aeiou')
     first_char = lambda s: s[0] if s else ''
     last_char = lambda s: s[-1] if s else ''
     
-    # String utilities
     repeat_string = lambda s, n: s * n
     truncate = lambda s, n: s[:n] + '...' if len(s) > n else s
     center_string = lambda s, width: s.center(width)
@@ -151,33 +140,28 @@ def demonstrate_list_lambdas():
     
     print("=== List Operation Lambda Functions ===")
     
-    # Filtering operations
     filter_evens = lambda lst: list(filter(lambda x: x % 2 == 0, lst))
     filter_odds = lambda lst: list(filter(lambda x: x % 2 == 1, lst))
     filter_positive = lambda lst: list(filter(lambda x: x > 0, lst))
     filter_greater_than = lambda lst, n: list(filter(lambda x: x > n, lst))
     
-    # Transformation operations
     square_list = lambda lst: list(map(lambda x: x ** 2, lst))
     double_list = lambda lst: list(map(lambda x: x * 2, lst))
     abs_list = lambda lst: list(map(abs, lst))
     str_list = lambda lst: list(map(str, lst))
     
-    # Aggregation operations
     sum_list = lambda lst: sum(lst)
     product_list = lambda lst: reduce(lambda x, y: x * y, lst, 1)
     max_value = lambda lst: max(lst) if lst else None
     min_value = lambda lst: min(lst) if lst else None
     average = lambda lst: sum(lst) / len(lst) if lst else 0
     
-    # List utilities
     reverse_list = lambda lst: lst[::-1]
     first_n = lambda lst, n: lst[:n]
     last_n = lambda lst, n: lst[-n:] if n <= len(lst) else lst
     unique_list = lambda lst: list(set(lst))
     flatten = lambda lst: [item for sublist in lst for item in sublist]
     
-    # Boolean operations
     all_positive = lambda lst: all(x > 0 for x in lst)
     any_negative = lambda lst: any(x < 0 for x in lst)
     is_sorted = lambda lst: lst == sorted(lst)
@@ -227,22 +211,18 @@ def demonstrate_advanced_lambdas():
     
     print("=== Advanced Lambda Functions ===")
     
-    # Higher-order functions
     compose = lambda f, g: lambda x: f(g(x))
     apply_n_times = lambda f, n: lambda x: x if n == 0 else f(apply_n_times(f, n-1)(x))
     conditional = lambda condition, true_func, false_func: lambda x: true_func(x) if condition(x) else false_func(x)
     
-    # Data processing
     group_by = lambda lst, key_func: {k: [item for item in lst if key_func(item) == k] for k in set(map(key_func, lst))}
     sort_by = lambda lst, key_func: sorted(lst, key=key_func)
     partition = lambda lst, predicate: (list(filter(predicate, lst)), list(filter(lambda x: not predicate(x), lst)))
     
-    # String processors
     extract_numbers = lambda s: [int(x) for x in s.split() if x.isdigit()]
     word_lengths = lambda sentence: list(map(len, sentence.split()))
     initials = lambda name: ''.join(word[0].upper() for word in name.split())
     
-    # Mathematical utilities
     clamp = lambda x, min_val, max_val: max(min_val, min(x, max_val))
     normalize = lambda lst: [(x - min(lst)) / (max(lst) - min(lst)) for x in lst] if max(lst) != min(lst) else [0] * len(lst)
     percentage = lambda part, total: (part / total) * 100 if total != 0 else 0
@@ -341,7 +321,6 @@ def lambda_function_challenges():
         user_answer = input("Enter your lambda function: ").strip()
         
         try:
-            # Test the user's lambda
             user_lambda = eval(user_answer)
             user_result = user_lambda(*challenge['test'].__code__.co_consts[1:]) if hasattr(challenge['test'].__code__, 'co_consts') else challenge['test']()
             

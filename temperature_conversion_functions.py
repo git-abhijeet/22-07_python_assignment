@@ -1,5 +1,3 @@
-# Temperature Conversion Functions
-# This program provides functions to convert between Celsius, Fahrenheit, and Kelvin
 
 def celsius_to_fahrenheit(celsius):
     """
@@ -51,7 +49,6 @@ def main():
     print("=== Temperature Conversion Functions ===")
     print()
     
-    # Example conversions as specified in the problem
     print("Sample Function Calls:")
     print(f"celsius_to_fahrenheit(0) = {celsius_to_fahrenheit(0)}")
     print(f"fahrenheit_to_kelvin(32) = {fahrenheit_to_kelvin(32)}")
@@ -64,10 +61,8 @@ def main():
     print(f"300K = {kelvin_to_celsius(300)}°C")
     print()
     
-    # Additional demonstrations
     print("=== Additional Conversion Examples ===")
     
-    # Common temperature conversions
     temps_celsius = [0, 25, 100, -40]
     temps_fahrenheit = [32, 68, 212, -40]
     temps_kelvin = [273.15, 298.15, 373.15, 233.15]
@@ -141,10 +136,8 @@ def interactive_converter():
             print("Invalid input! Please enter a valid number.")
 
 if __name__ == "__main__":
-    # Run the main demonstration
     main()
     
-    # Ask if user wants to try interactive converter
     try_interactive = input("\nWould you like to try the interactive converter? (y/n): ")
     if try_interactive.lower() in ['y', 'yes']:
         interactive_converter()

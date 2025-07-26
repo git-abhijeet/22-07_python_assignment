@@ -1,7 +1,4 @@
-# Modular Program Design - Library Management System
-# This program demonstrates modular design with separate functions for each operation
 
-# Global variable to store the library inventory
 library_inventory = []
 
 def add_book():
@@ -11,18 +8,15 @@ def add_book():
     title = input("Enter book title: ").strip()
     author = input("Enter author name: ").strip()
     
-    # Validate input
     if not title or not author:
         print("Error: Both title and author are required!")
         return
     
-    # Check if book already exists
     for book in library_inventory:
         if book['title'].lower() == title.lower() and book['author'].lower() == author.lower():
             print(f"Book '{title}' by {author} already exists in the inventory!")
             return
     
-    # Add book to inventory
     book = {
         'title': title,
         'author': author
@@ -46,7 +40,6 @@ def search_book():
     
     found_books = []
     
-    # Search in both title and author
     for book in library_inventory:
         if (search_term in book['title'].lower() or 
             search_term in book['author'].lower()):
@@ -87,7 +80,6 @@ def remove_book():
         print("Error: Both title and author are required!")
         return
     
-    # Find and remove the book
     for i, book in enumerate(library_inventory):
         if book['title'].lower() == title.lower() and book['author'].lower() == author.lower():
             removed_book = library_inventory.pop(i)
@@ -141,7 +133,6 @@ def main():
     """Main function to run the library management system"""
     print("Welcome to the Library Management System!")
     
-    # Ask if user wants sample data
     initialize_sample_data()
     
     while True:
@@ -161,7 +152,6 @@ def main():
             print("Goodbye! 👋")
             break
         
-        # Pause before showing menu again
         input("\nPress Enter to continue...")
 
 if __name__ == "__main__":

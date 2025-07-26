@@ -1,5 +1,3 @@
-# User Input Validator
-# This program demonstrates robust input validation with error handling
 
 def validate_integer_range(prompt, min_value, max_value):
     """
@@ -17,15 +15,12 @@ def validate_integer_range(prompt, min_value, max_value):
         try:
             user_input = input(prompt).strip()
             
-            # Check for empty input
             if not user_input:
                 print("Empty input. Please enter a value.")
                 continue
             
-            # Try to convert to integer
             value = int(user_input)
             
-            # Check if value is within range
             if value < min_value or value > max_value:
                 print(f"Out of range. Please enter a number between {min_value} and {max_value}.")
                 continue
@@ -54,15 +49,12 @@ def validate_float_range(prompt, min_value, max_value):
         try:
             user_input = input(prompt).strip()
             
-            # Check for empty input
             if not user_input:
                 print("Empty input. Please enter a value.")
                 continue
             
-            # Try to convert to float
             value = float(user_input)
             
-            # Check if value is within range
             if value < min_value or value > max_value:
                 print(f"Out of range. Please enter a number between {min_value} and {max_value}.")
                 continue
@@ -91,7 +83,6 @@ def validate_string_length(prompt, min_length=1, max_length=100):
         try:
             user_input = input(prompt).strip()
             
-            # Check for empty input
             if len(user_input) < min_length:
                 if min_length == 1:
                     print("Empty input. Please enter a value.")
@@ -99,7 +90,6 @@ def validate_string_length(prompt, min_length=1, max_length=100):
                     print(f"Input too short. Please enter at least {min_length} characters.")
                 continue
             
-            # Check maximum length
             if len(user_input) > max_length:
                 print(f"Input too long. Please enter no more than {max_length} characters.")
                 continue
@@ -122,19 +112,16 @@ def validate_email(prompt):
     """
     import re
     
-    # Basic email regex pattern
     email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     
     while True:
         try:
             user_input = input(prompt).strip()
             
-            # Check for empty input
             if not user_input:
                 print("Empty input. Please enter an email address.")
                 continue
             
-            # Validate email format
             if not re.match(email_pattern, user_input):
                 print("Invalid email format. Please enter a valid email address (e.g., user@example.com).")
                 continue
@@ -160,17 +147,14 @@ def validate_choice(prompt, valid_choices):
         try:
             user_input = input(prompt).strip()
             
-            # Check for empty input
             if not user_input:
                 print("Empty input. Please enter a choice.")
                 continue
             
-            # Check if choice is valid (case-insensitive)
             if user_input.lower() not in [choice.lower() for choice in valid_choices]:
                 print(f"Invalid choice. Please choose from: {', '.join(valid_choices)}")
                 continue
             
-            # Return the choice in original case from valid_choices
             for choice in valid_choices:
                 if choice.lower() == user_input.lower():
                     return choice
@@ -191,27 +175,22 @@ def validate_phone_number(prompt):
     """
     import re
     
-    # Phone number pattern (supports various formats)
     phone_pattern = r'^(\+\d{1,3}[- ]?)?\d{10}$|^(\+\d{1,3}[- ]?)?\(\d{3}\)[- ]?\d{3}[- ]?\d{4}$'
     
     while True:
         try:
             user_input = input(prompt).strip()
             
-            # Check for empty input
             if not user_input:
                 print("Empty input. Please enter a phone number.")
                 continue
             
-            # Remove spaces and dashes for validation
             clean_input = re.sub(r'[- ()]', '', user_input)
             
-            # Check if it contains only digits and optional +
             if not re.match(r'^\+?\d+$', clean_input):
                 print("Invalid phone number. Please enter digits only (with optional country code).")
                 continue
             
-            # Check length (10-15 digits including country code)
             digit_count = len(re.sub(r'[^\d]', '', clean_input))
             if digit_count < 10 or digit_count > 15:
                 print("Invalid phone number length. Please enter 10-15 digits.")
@@ -229,43 +208,36 @@ def demonstration_program():
     print("=== User Input Validator Demonstration ===")
     print("This program demonstrates robust input validation with error handling.\n")
     
-    # Age validation (as per the example)
     print("1. Age Validation:")
     age = validate_integer_range("Enter your age (1-120): ", 1, 120)
     if age is not None:
         print(f"You entered a valid age: {age}\n")
     
-    # Name validation
     print("2. Name Validation:")
     name = validate_string_length("Enter your full name (2-50 characters): ", 2, 50)
     if name is not None:
         print(f"You entered a valid name: {name}\n")
     
-    # Height validation
     print("3. Height Validation:")
     height = validate_float_range("Enter your height in meters (0.5-3.0): ", 0.5, 3.0)
     if height is not None:
         print(f"You entered a valid height: {height:.2f} meters\n")
     
-    # Email validation
     print("4. Email Validation:")
     email = validate_email("Enter your email address: ")
     if email is not None:
         print(f"You entered a valid email: {email}\n")
     
-    # Choice validation
     print("5. Choice Validation:")
     gender = validate_choice("Enter your gender (Male/Female/Other): ", ["Male", "Female", "Other"])
     if gender is not None:
         print(f"You selected: {gender}\n")
     
-    # Phone validation
     print("6. Phone Number Validation:")
     phone = validate_phone_number("Enter your phone number: ")
     if phone is not None:
         print(f"You entered a valid phone number: {phone}\n")
     
-    # Summary
     if all(value is not None for value in [age, name, height, email, gender, phone]):
         print("=== Validation Summary ===")
         print(f"Name: {name}")

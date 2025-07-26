@@ -1,12 +1,9 @@
-# Multi-Format String Displayer
-# This program demonstrates all three string formatting methods in Python
 
 def demonstrate_basic_example():
     """Demonstrates the basic example from requirements"""
     
     print("=== Basic Example from Requirements ===")
     
-    # Variables
     name = "Alice"
     age = 28
     city = "Delhi"
@@ -17,33 +14,28 @@ def demonstrate_basic_example():
     print(f"city = \"{city}\"")
     print()
     
-    # Expected output for all formats
     expected_output = "My name is Alice, I am 28 years old, and I live in Delhi."
     print(f"Expected Output: {expected_output}")
     print()
     
-    # Method 1: % formatting (old style)
     print("1. Using % formatting:")
     print("Code: \"My name is %s, I am %d years old, and I live in %s.\" % (name, age, city)")
     result1 = "My name is %s, I am %d years old, and I live in %s." % (name, age, city)
     print(f"Output: {result1}")
     print()
     
-    # Method 2: .format() method
     print("2. Using .format() method:")
     print("Code: \"My name is {}, I am {} years old, and I live in {}.\".format(name, age, city)")
     result2 = "My name is {}, I am {} years old, and I live in {}.".format(name, age, city)
     print(f"Output: {result2}")
     print()
     
-    # Method 3: f-strings (modern way)
     print("3. Using f-strings:")
     print("Code: f\"My name is {name}, I am {age} years old, and I live in {city}.\"")
     result3 = f"My name is {name}, I am {age} years old, and I live in {city}."
     print(f"Output: {result3}")
     print()
     
-    # Verify all outputs are the same
     print("=== Verification ===")
     print(f"All outputs match: {result1 == result2 == result3 == expected_output}")
 
@@ -52,7 +44,6 @@ def demonstrate_advanced_formatting():
     
     print("\n=== Advanced Formatting Examples ===")
     
-    # Variables for advanced examples
     name = "Bob"
     salary = 75000.456
     percentage = 0.8567
@@ -124,7 +115,6 @@ def demonstrate_alignment_and_padding():
     print("Creating a formatted table:")
     print()
     
-    # Header
     print("Using % formatting:")
     print("%-10s %8s %5s" % ("Item", "Price", "Qty"))
     print("-" * 25)
@@ -151,7 +141,6 @@ def demonstrate_special_cases():
     
     print("=== Special Cases ===")
     
-    # Date formatting
     from datetime import datetime
     now = datetime.now()
     
@@ -169,7 +158,6 @@ def demonstrate_special_cases():
     print(f"   Output: {result3}")
     print()
     
-    # Dictionary formatting
     print("2. Dictionary Formatting:")
     person = {"name": "Charlie", "age": 30, "job": "Engineer"}
     
@@ -198,19 +186,16 @@ def performance_comparison():
     city = "Test City"
     iterations = 100000
     
-    # Test % formatting
     start_time = time.time()
     for _ in range(iterations):
         result = "My name is %s, I am %d years old, and I live in %s." % (name, age, city)
     percent_time = time.time() - start_time
     
-    # Test .format() method
     start_time = time.time()
     for _ in range(iterations):
         result = "My name is {}, I am {} years old, and I live in {}.".format(name, age, city)
     format_time = time.time() - start_time
     
-    # Test f-strings
     start_time = time.time()
     for _ in range(iterations):
         result = f"My name is {name}, I am {age} years old, and I live in {city}."
@@ -234,7 +219,6 @@ def interactive_formatter():
     
     print("\n=== Interactive Formatter ===")
     
-    # Get user input
     name = input("Enter a name: ").strip()
     try:
         age = int(input("Enter an age: ").strip())
@@ -252,7 +236,6 @@ def interactive_formatter():
     print(f"\nUsing: name=\"{name}\", age={age}, city=\"{city}\"")
     print()
     
-    # Templates for user to try
     templates = [
         "My name is {name}, I am {age} years old, and I live in {city}.",
         "Hello! I'm {name} from {city}, and I'm {age} years old.",
@@ -264,7 +247,6 @@ def interactive_formatter():
         print(f"Template {i}: {template}")
         print()
         
-        # Show all three methods
         print("  % formatting:")
         percent_template = template.replace("{name}", "%s").replace("{age}", "%d").replace("{city}", "%s")
         percent_result = percent_template % (name, age, city)

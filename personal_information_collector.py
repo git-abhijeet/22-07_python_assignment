@@ -1,10 +1,7 @@
-# Personal Information Collector
-# This program asks the user for their personal information and displays a formatted summary
 
 def main():
     """Main function to collect user information and display formatted summary"""
     
-    # Collect user information
     print("=== Personal Information Collector ===")
     print()
     
@@ -13,7 +10,6 @@ def main():
     city = input("Enter your city: ")
     hobby = input("Enter your hobby: ")
     
-    # Display formatted summary
     print()
     print("=== Your Information Summary ===")
     print(f"Hello, {name}!")
