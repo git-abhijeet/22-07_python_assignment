@@ -1,0 +1,10 @@
+{
+    "name": "Margherita Pizza",
+    "description": "Classic pizza with fresh mozzarella, tomato sauce, and basil",
+    "price": "18.99",
+    "category": "Main Course",
+    "is_vegetarian": true,
+    "is_vegan": false,
+    "is_available": true,
+    "preparation_time": 15
+}

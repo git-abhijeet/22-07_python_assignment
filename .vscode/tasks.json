@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Zomato V1 Server",
+			"type": "shell",
+			"command": "C:/Users/LENOVO/AppData/Local/Microsoft/WindowsApps/python3.13.exe",
+			"args": [
+				"main.py"
+			],
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Italiano Bistro",
+    "description": "Authentic Italian cuisine in a cozy atmosphere",
+    "cuisine_type": "Italian",
+    "address": "456 Food Street, Gourmet District",
+    "phone_number": "+1-555-0456",
+    "rating": 4.7,
+    "is_active": true,
+    "opening_time": "11:00:00",
+    "closing_time": "23:00:00"
+}

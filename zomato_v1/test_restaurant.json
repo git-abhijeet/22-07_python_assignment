@@ -1,0 +1,11 @@
+{
+    "name": "Pizza Palace",
+    "description": "Authentic Italian pizzas with fresh ingredients",
+    "cuisine_type": "Italian",
+    "address": "123 Main Street, Downtown",
+    "phone_number": "+1-555-0123",
+    "rating": 4.5,
+    "is_active": true,
+    "opening_time": "10:00:00",
+    "closing_time": "22:00:00"
+}
