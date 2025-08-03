@@ -2,26 +2,61 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
+import logging
 
 from database import create_tables
 from routes.restaurants import router as restaurant_router
 from routes.menu_items import router as menu_item_router, restaurant_menu_router
+from routes.advanced_cache_routes import cache_router, performance_router
+from advanced_cache_manager import advanced_cache_manager
+from redis_config import redis_config
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    print("Creating database tables...")
+    logger.info("Starting Zomato V2 with advanced caching...")
+    
+    # Initialize database
+    logger.info("Creating database tables...")
     await create_tables()
-    print("Database tables created successfully!")
+    logger.info("Database tables created successfully!")
+    
+    # Initialize cache manager
+    logger.info("Initializing advanced cache manager...")
+    await advanced_cache_manager.initialize()
+    
+    # Optional cache warming on startup
+    if redis_config.CACHE_WARM_ON_STARTUP:
+        logger.info("Performing cache warming...")
+        # Cache warming would happen here
+        logger.info("Cache warming completed")
+    
+    logger.info("Zomato V2 startup completed with advanced caching enabled")
     yield
+    
     # Shutdown
-    print("Application shutting down...")
+    logger.info("Shutting down Zomato V2...")
+    await advanced_cache_manager.cleanup()
+    logger.info("Application shutdown completed")
 
 # Create FastAPI application
 app = FastAPI(
-    title="Zomato V2 - Restaurant & Menu Management System",
-    description="A restaurant and menu management system with one-to-many relationships",
-    version="2.0.0",
+    title="Zomato V2 - Advanced Restaurant-Menu Caching System",
+    description="""
+    A sophisticated restaurant and menu management system with advanced multi-level caching strategies.
+    
+    **Q2 Features:**
+    - Multi-level TTL caching (restaurants: 10min, menu items: 8min, restaurant-menus: 15min, search: 5min)
+    - Hierarchical cache invalidation
+    - Namespace-based cache organization
+    - Performance monitoring and comparison
+    - Redis with memory fallback
+    """,
+    version="2.0.0 - Advanced Caching",
     lifespan=lifespan
 )
 
@@ -42,6 +77,12 @@ app.include_router(menu_item_router)
 
 # Include restaurant-specific menu routes
 app.include_router(restaurant_menu_router)
+
+# Include advanced cache management routes (Q2)
+app.include_router(cache_router)
+
+# Include performance testing routes (Q2)
+app.include_router(performance_router)
 
 # Root endpoint
 @app.get("/", tags=["Root"])

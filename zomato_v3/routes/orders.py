@@ -1,21 +1,36 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 from http import HTTPStatus
+import logging
+
 from database import get_database
 from schemas import (
     OrderCreate, OrderResponse, OrderList, OrderStatusUpdate
 )
 from crud import order_crud, customer_crud
+from enterprise_cache_decorators import (
+    conditional_cache, write_through_cache, cache_if_delivered, order_key_builder
+)
+from redis_config import redis_config
+
+# Setup logging
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 @router.get("/{order_id}", response_model=OrderResponse)
+@conditional_cache(
+    namespace=redis_config.ORDER_NAMESPACE,
+    expire=redis_config.ORDER_STATUS_TTL,
+    condition=cache_if_delivered
+)
 async def get_order(
     order_id: int,
+    request: Request,
     db: AsyncSession = Depends(get_database)
 ):
-    """Get order with full details"""
+    """Get order with conditional caching (only cache delivered orders)"""
     try:
         order = await order_crud.get_order(db, order_id)
         if not order:
@@ -27,6 +42,7 @@ async def get_order(
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f"Failed to retrieve order {order_id}: {e}")
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             detail="Failed to retrieve order"

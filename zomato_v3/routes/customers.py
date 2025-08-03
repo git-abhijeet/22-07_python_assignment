@@ -1,13 +1,22 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 from http import HTTPStatus
+import logging
+
 from database import get_database
 from schemas import (
     CustomerCreate, CustomerUpdate, CustomerResponse, CustomerList,
     CustomerWithOrders, OrderList, ReviewList, CustomerAnalytics
 )
 from crud import customer_crud, order_crud, review_crud
+from enterprise_cache_decorators import (
+    session_cache, write_through_cache, customer_key_builder
+)
+from redis_config import redis_config
+
+# Setup logging
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/customers", tags=["customers"])
 
@@ -56,11 +65,17 @@ async def get_customers(
         )
 
 @router.get("/{customer_id}", response_model=CustomerResponse)
+@session_cache(
+    namespace=redis_config.CUSTOMER_NAMESPACE,
+    expire=redis_config.CUSTOMER_PROFILE_TTL,
+    key_builder=customer_key_builder
+)
 async def get_customer(
     customer_id: int,
+    request: Request,
     db: AsyncSession = Depends(get_database)
 ):
-    """Get a specific customer by ID"""
+    """Get customer profile with session-based caching"""
     try:
         customer = await customer_crud.get_customer(db, customer_id)
         if not customer:
@@ -72,6 +87,7 @@ async def get_customer(
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f"Failed to retrieve customer {customer_id}: {e}")
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             detail="Failed to retrieve customer"

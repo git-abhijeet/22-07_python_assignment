@@ -1,25 +1,47 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 from http import HTTPStatus
+import logging
+import time
+
 from database import get_database
 from schemas import (
     MenuItemCreate, MenuItemUpdate, MenuItemResponse, MenuItemList,
     MenuItemWithRestaurant
 )
 from crud import menu_item_crud
+from advanced_cache_manager import advanced_cache_manager
+from redis_config import redis_config
+
+# Setup logging
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/menu-items", tags=["menu-items"])
 
 @router.post("/", response_model=MenuItemResponse, status_code=HTTPStatus.CREATED)
 async def create_menu_item_standalone(
     menu_item: MenuItemCreate,
+    request: Request,
     restaurant_id: int = Query(..., description="Restaurant ID for the menu item"),
     db: AsyncSession = Depends(get_database)
 ):
-    """Create a new menu item (alternative endpoint)"""
+    """Create a new menu item with hierarchical cache invalidation"""
     try:
+        # Create menu item
         db_menu_item = await menu_item_crud.create_menu_item(db, restaurant_id, menu_item)
+        
+        # Q2 Hierarchical cache invalidation for menu item creation
+        await advanced_cache_manager.invalidate_hierarchical([
+            f"{redis_config.MENU_ITEMS_NAMESPACE}:list",  # Clear menu item lists
+            f"{redis_config.MENU_ITEMS_NAMESPACE}:restaurant:{restaurant_id}",  # Clear restaurant menu cache
+            f"{redis_config.RESTAURANT_MENUS_NAMESPACE}:restaurant:{restaurant_id}",  # Clear restaurant-menu combinations
+            f"{redis_config.CATEGORIES_NAMESPACE}:category:{menu_item.category}",  # Clear category caches
+            f"{redis_config.DIETARY_NAMESPACE}:vegetarian:{menu_item.is_vegetarian}",  # Clear dietary filters
+            f"{redis_config.DIETARY_NAMESPACE}:vegan:{menu_item.is_vegan}"  # Clear vegan filters
+        ])
+        
+        logger.info(f"Created menu item {db_menu_item.id} for restaurant {restaurant_id} with cache invalidation")
         return db_menu_item
     except ValueError as e:
         raise HTTPException(
@@ -27,6 +49,7 @@ async def create_menu_item_standalone(
             detail=str(e)
         )
     except Exception as e:
+        logger.error(f"Failed to create menu item: {e}")
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             detail="Failed to create menu item"
@@ -34,6 +57,7 @@ async def create_menu_item_standalone(
 
 @router.get("/", response_model=MenuItemList)
 async def get_menu_items(
+    request: Request,
     skip: int = Query(0, ge=0, description="Number of menu items to skip"),
     limit: int = Query(20, ge=1, le=100, description="Number of menu items to return"),
     category: Optional[str] = Query(None, description="Filter by category"),
@@ -42,11 +66,57 @@ async def get_menu_items(
     available_only: bool = Query(False, description="Show only available items"),
     db: AsyncSession = Depends(get_database)
 ):
-    """Get all menu items with optional filters"""
+    """Get all menu items with advanced filter-based caching"""
     try:
+        # Create sophisticated cache key based on all filters
+        cache_parts = [
+            f"skip:{skip}",
+            f"limit:{limit}",
+            f"category:{category}" if category else "category:all",
+            f"vegetarian:{vegetarian}" if vegetarian is not None else "vegetarian:all",
+            f"vegan:{vegan}" if vegan is not None else "vegan:all",
+            f"available:{available_only}"
+        ]
+        cache_key = f"{redis_config.MENU_ITEMS_NAMESPACE}:list:{'_'.join(cache_parts)}"
+        
+        # Check cache for filtered results
+        cached_data = await advanced_cache_manager.get_cached_data(cache_key)
+        if cached_data:
+            logger.info(f"Cache hit for menu items with filters")
+            return MenuItemList(**cached_data)
+        
+        # Fetch from database with filters
+        start_time = time.time()
         menu_items, total = await menu_item_crud.get_menu_items(
             db, skip=skip, limit=limit, category=category, 
             vegetarian=vegetarian, vegan=vegan, available_only=available_only
+        )
+        
+        result = MenuItemList(
+            menu_items=menu_items,
+            total=total,
+            skip=skip,
+            limit=limit
+        )
+        
+        # Cache filtered results with menu item TTL
+        await advanced_cache_manager.cache_data(
+            key=cache_key,
+            data=result.dict(),
+            ttl=redis_config.MENU_ITEM_TTL,  # 8 minutes for menu items
+            namespace=redis_config.MENU_ITEMS_NAMESPACE
+        )
+        
+        # Performance logging
+        fetch_time = (time.time() - start_time) * 1000
+        logger.info(f"Filtered menu items query took {fetch_time:.3f}ms")
+        
+        return result
+    except Exception as e:
+        logger.error(f"Failed to retrieve menu items: {e}")
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve menu items"
         )
         return MenuItemList(
             menu_items=menu_items,

@@ -1,24 +1,43 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi_cache2 import cache
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 from http import HTTPStatus
+import time
+import logging
+
 from database import get_database
 from schemas import (
     RestaurantCreate, RestaurantUpdate, RestaurantResponse, RestaurantList,
     RestaurantWithMenu, MenuItemList, ReviewList, RestaurantAnalytics
 )
 from crud import restaurant_crud, review_crud, order_crud
+from redis_config import redis_config
+from cache_utils import cache_manager, timing_decorator
+
+# Setup logging
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/restaurants", tags=["restaurants"])
 
 @router.post("/", response_model=RestaurantResponse, status_code=HTTPStatus.CREATED)
+@timing_decorator
 async def create_restaurant(
     restaurant: RestaurantCreate,
     db: AsyncSession = Depends(get_database)
 ):
-    """Create a new restaurant"""
+    """Create a new restaurant and invalidate related caches"""
     try:
+        start_time = time.time()
+        
         db_restaurant = await restaurant_crud.create_restaurant(db, restaurant)
+        
+        # Invalidate restaurant caches after creation
+        await cache_manager.invalidate_restaurant_cache()
+        
+        response_time = (time.time() - start_time) * 1000
+        cache_manager.log_cache_performance("create_restaurant", False, response_time)
+        
         return db_restaurant
     except ValueError as e:
         raise HTTPException(
@@ -26,12 +45,15 @@ async def create_restaurant(
             detail=str(e)
         )
     except Exception as e:
+        logger.error(f"Failed to create restaurant: {e}")
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             detail="Failed to create restaurant"
         )
 
 @router.get("/", response_model=RestaurantList)
+@cache(namespace=redis_config.RESTAURANT_NAMESPACE, expire=redis_config.RESTAURANT_LIST_TTL)
+@timing_decorator
 async def get_restaurants(
     skip: int = Query(0, ge=0, description="Number of restaurants to skip"),
     limit: int = Query(10, ge=1, le=100, description="Number of restaurants to return"),
@@ -41,12 +63,18 @@ async def get_restaurants(
     active_only: bool = Query(False, description="Show only active restaurants"),
     db: AsyncSession = Depends(get_database)
 ):
-    """Get restaurants with advanced filtering"""
+    """Get restaurants with advanced filtering and caching"""
     try:
+        start_time = time.time()
+        
         restaurants, total = await restaurant_crud.get_restaurants(
             db, skip=skip, limit=limit, cuisine_type=cuisine_type,
             min_rating=min_rating, location=location, active_only=active_only
         )
+        
+        response_time = (time.time() - start_time) * 1000
+        cache_manager.log_cache_performance("get_restaurants", True, response_time)
+        
         return RestaurantList(
             restaurants=restaurants,
             total=total,
@@ -60,22 +88,31 @@ async def get_restaurants(
         )
 
 @router.get("/{restaurant_id}", response_model=RestaurantResponse)
+@cache(namespace=redis_config.RESTAURANT_NAMESPACE, expire=redis_config.RESTAURANT_DETAIL_TTL)
+@timing_decorator
 async def get_restaurant(
     restaurant_id: int,
     db: AsyncSession = Depends(get_database)
 ):
-    """Get a specific restaurant by ID"""
+    """Get a specific restaurant by ID with caching"""
     try:
+        start_time = time.time()
+        
         restaurant = await restaurant_crud.get_restaurant(db, restaurant_id)
         if not restaurant:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
                 detail=f"Restaurant with ID {restaurant_id} not found"
             )
+        
+        response_time = (time.time() - start_time) * 1000
+        cache_manager.log_cache_performance(f"get_restaurant_{restaurant_id}", True, response_time)
+        
         return restaurant
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f"Failed to retrieve restaurant {restaurant_id}: {e}")
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             detail="Failed to retrieve restaurant"
@@ -186,13 +223,16 @@ async def get_restaurant_analytics(
         )
 
 @router.put("/{restaurant_id}", response_model=RestaurantResponse)
+@timing_decorator
 async def update_restaurant(
     restaurant_id: int,
     restaurant_update: RestaurantUpdate,
     db: AsyncSession = Depends(get_database)
 ):
-    """Update a restaurant"""
+    """Update a restaurant and invalidate related caches"""
     try:
+        start_time = time.time()
+        
         updated_restaurant = await restaurant_crud.update_restaurant(
             db, restaurant_id, restaurant_update
         )
@@ -201,6 +241,13 @@ async def update_restaurant(
                 status_code=HTTPStatus.NOT_FOUND,
                 detail=f"Restaurant with ID {restaurant_id} not found"
             )
+        
+        # Invalidate restaurant caches after update
+        await cache_manager.invalidate_restaurant_cache(restaurant_id)
+        
+        response_time = (time.time() - start_time) * 1000
+        cache_manager.log_cache_performance(f"update_restaurant_{restaurant_id}", False, response_time)
+        
         return updated_restaurant
     except ValueError as e:
         raise HTTPException(
@@ -210,28 +257,40 @@ async def update_restaurant(
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f"Failed to update restaurant {restaurant_id}: {e}")
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             detail="Failed to update restaurant"
         )
 
 @router.delete("/{restaurant_id}", status_code=HTTPStatus.NO_CONTENT)
+@timing_decorator
 async def delete_restaurant(
     restaurant_id: int,
     db: AsyncSession = Depends(get_database)
 ):
-    """Delete a restaurant (will cascade delete menu items, orders, etc.)"""
+    """Delete a restaurant and invalidate related caches"""
     try:
+        start_time = time.time()
+        
         deleted = await restaurant_crud.delete_restaurant(db, restaurant_id)
         if not deleted:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
                 detail=f"Restaurant with ID {restaurant_id} not found"
             )
+        
+        # Invalidate restaurant caches after deletion
+        await cache_manager.invalidate_restaurant_cache(restaurant_id)
+        
+        response_time = (time.time() - start_time) * 1000
+        cache_manager.log_cache_performance(f"delete_restaurant_{restaurant_id}", False, response_time)
+        
         return None
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f"Failed to delete restaurant {restaurant_id}: {e}")
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             detail="Failed to delete restaurant"
